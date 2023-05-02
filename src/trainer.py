@@ -10,20 +10,20 @@ from torch.utils.tensorboard import SummaryWriter
 class Trainer:
 
     def __init__(self,
-                 args,
-                 model,
-                 optimizer,
-                 lr_scheduler,
-                 train_dataloader,
-                 eval_dataloader,
-                 external_dataloader,
-                 logger,
-                 accelerator,
-                 metric,
-                 label_list,
-                 tokenizer,
-                 from_checkpoint=None,
-                 test_dataloader=None,
+                args,
+                model,
+                optimizer,
+                lr_scheduler,
+                train_dataloader,
+                eval_dataloader,
+                external_dataloader,
+                logger,
+                accelerator,
+                metric,
+                label_list,
+                tokenizer,
+                from_checkpoint=None,
+                test_dataloader=None,
                 ):
         
         self.args = args
@@ -65,8 +65,8 @@ class Trainer:
             save_path = self.args.output_dir
         
         if self.accelerator.is_main_process:
-           unwrapped_model = self.accelerator.unwrap_model(self.model)
-           unwrapped_model.save_pretrained(save_path, save_function=self.accelerator.save)
+            unwrapped_model = self.accelerator.unwrap_model(self.model)
+            unwrapped_model.save_pretrained(save_path, save_function=self.accelerator.save)
 
     def _save_trained(self):
         self._save_model()

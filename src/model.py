@@ -10,6 +10,7 @@ from transformers.utils.dummy_pt_objects import NoRepeatNGramLogitsProcessor
 
 logger = logging.getLogger(__name__)
 
+# TODO : setting loss on this function
 class BertForMaskedLM(BertPreTrainedModel):
 
     _keys_to_ignore_on_load_unexpected = [r"pooler"]
@@ -83,10 +84,11 @@ class BertForMaskedLM(BertPreTrainedModel):
             output_hidden_states=output_hidden_states,
             return_dict=return_dict,
         )
+        
         sequence_output = outputs[0]
         cls_prediction_scores = self.cls_layer(sequence_output[:,0])
 
-        # compute cls loss
+        # * compute cls loss
         cls_loss = None
         cls_weight = 0.0
         if cls_labels is not None:
@@ -95,7 +97,7 @@ class BertForMaskedLM(BertPreTrainedModel):
         else:
             cls_loss = cls_prediction_scores.sum() * 0.0
 
-        # compute mlm loss
+        # * compute mlm loss
         mlm_loss = None
         if labels is not None and (self.args.mlm_weight > 0.0 or cls_labels is None):
             assert labels is not None, "mlm without labels!"
@@ -112,9 +114,11 @@ class BertForMaskedLM(BertPreTrainedModel):
 
         loss = (mlm_loss * mlm_weight + cls_loss * cls_weight) / (mlm_weight + cls_weight)
         
+        # * MaskedLMOutput for wrapping output
         return MaskedLMOutput(
             loss=loss,
             logits=cls_prediction_scores,
             hidden_states=outputs.hidden_states,
             attentions=outputs.attentions,
         )
+# TODO-end : setting loss on this function
